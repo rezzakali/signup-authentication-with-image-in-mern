@@ -95,7 +95,15 @@ router.post('/login', async (req, res) => {
     res.status(500).send('There was a server side error!');
   }
 });
-
+// get user
+router.get('/userinfo', async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json({ result: users });
+  } catch (error) {
+    res.status(500).json({ error: 'There was a server side error!' });
+  }
+});
 // Logout router
 router.get('/logout', async (req, res) => {
   try {
@@ -116,16 +124,29 @@ router.get('/auth', authorization, (req, res) => {
 
 // post router
 router.post('/post', upload.single('postImage'), async (req, res) => {
+  const postImage = req.file ? req.file.filename : null;
+  const { title, description } = req.body;
+
+  const newPost = new Post({
+    title: title,
+    description: description,
+    image: postImage,
+    user: req.userId,
+  });
+
   try {
-    const postImage = req.file ? req.file.filename : null;
-    const title = req.body.title;
-    const description = req.body.description;
-    const newPost = new Post({
-      title: title,
-      description: description,
-      image: postImage,
-    });
-    await newPost.save();
+    const post = await newPost.save();
+    await User.updateOne(
+      {
+        _id: req.userId,
+      },
+
+      {
+        $push: {
+          posts: post._id,
+        },
+      }
+    );
     res.status(200).json({ result: 'posted successfully!' });
   } catch (error) {
     res.status(500).send('There was a server side error!');
@@ -136,6 +157,16 @@ router.post('/post', upload.single('postImage'), async (req, res) => {
 router.get('/posts', async (req, res) => {
   try {
     const result = await Post.find({});
+    res.status(200).json({ result: result });
+  } catch (error) {
+    res.status(500).json({ error: 'There was a server side error!' });
+  }
+});
+
+// get post by id
+router.get('/posts/:id', async (req, res) => {
+  try {
+    const result = await Post.findById({ _id: req.params.id });
     res.status(200).json({ result: result });
   } catch (error) {
     res.status(500).json({ error: 'There was a server side error!' });

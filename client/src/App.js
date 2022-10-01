@@ -8,6 +8,7 @@ import Blogs from './components/pages/Blogs';
 import Login from './components/pages/Login';
 import Logout from './components/pages/Logout';
 import Post from './components/pages/Post';
+import PostDetails from './components/pages/PostDetails';
 import Register from './components/pages/Register';
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<Blogs />} />
           <Route path="/about" element={<About />} />
           <Route path="/post" element={<Post />} />
+          <Route path="/post/:id" element={<PostDetails />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />

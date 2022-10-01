@@ -26,7 +26,7 @@ app.use(cors(corsOptions));
 //     credentials: true,
 //   })
 // );
-app.use(express.static('./public/Uploads/'));
+app.use(express.static('./public/uploads/'));
 // app.use(express.static(path.join(__dirname, './public/Uploads')));
 
 app.use(express.urlencoded({ extended: true }));

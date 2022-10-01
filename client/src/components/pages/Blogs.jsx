@@ -25,9 +25,11 @@ function Home() {
       <br />
       <br />
       <br />
-      {posts.map((post) => {
-        return <Card post={post} key={post._id} />;
-      })}
+      <div>
+        {posts.map((post) => {
+          return <Card post={post} key={post._id} />;
+        })}
+      </div>
     </div>
   );
 }

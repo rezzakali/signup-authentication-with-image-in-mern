@@ -1,10 +1,12 @@
-const express = require('express');
-const User = require('../schemas/userSchema');
-const bcrypt = require('bcrypt');
-const authorization = require('../middleware/authentication');
-const Post = require('../schemas/postSchema');
-const multer = require('multer');
-const path = require('path');
+// external imports
+import bcrypt from 'bcrypt';
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+
+// internal imports
+import authentication from '../middleware/authentication.js';
+import User from '../models/userSchema.js';
 
 const router = express.Router();
 
@@ -46,22 +48,27 @@ const upload = multer({
 });
 
 // Register router
-router.post('/register', async (req, res) => {
+router.post('/register', upload.any('avatar'), async (req, res) => {
   try {
+    const avatar = req.files ? req.files[0].filename : '';
+    console.log(avatar);
     const name = req.body.name;
     const email = req.body.email;
     const phone = req.body.phone;
     const password = req.body.password;
 
     const newUser = new User({
-      name: name,
-      email: email,
-      phone: phone,
-      password: password,
+      name,
+      email,
+      phone,
+      password,
+      avatar,
     });
     await newUser.save();
+    console.log(newUser);
     res.status(200).send('User created successfully!');
   } catch (error) {
+    console.log(error);
     res.status(500).send('There was a server side error!');
   }
 });
@@ -84,7 +91,7 @@ router.post('/login', async (req, res) => {
           sameSite: 'None', //cross-site cookie
         });
 
-        res.status(200).send('Logged in successfully!');
+        res.status(200).json(user);
       } else {
         res.status(400).send('Invalid user details');
       }
@@ -118,7 +125,7 @@ router.get('/logout', async (req, res) => {
   }
 });
 
-router.get('/auth', authorization, (req, res) => {
+router.get('/auth', authentication, (req, res) => {
   res.status(200).send('Success');
 });
 
@@ -172,4 +179,5 @@ router.get('/posts/:id', async (req, res) => {
     res.status(500).json({ error: 'There was a server side error!' });
   }
 });
-module.exports = router;
+
+export default router;

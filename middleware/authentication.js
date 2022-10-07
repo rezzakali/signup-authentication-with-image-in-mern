@@ -1,5 +1,8 @@
-const User = require('../schemas/userSchema');
-const jwt = require('jsonwebtoken');
+// external imports
+import jwt from 'jsonwebtoken';
+
+// internal imports
+import User from '../models/userSchema.js';
 
 const authentication = async (req, res, next) => {
   try {
@@ -24,4 +27,4 @@ const authentication = async (req, res, next) => {
   }
 };
 
-module.exports = authentication;
+export default authentication;

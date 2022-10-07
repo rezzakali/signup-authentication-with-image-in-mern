@@ -1,160 +1,140 @@
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import registerImage from '../images/register.png';
-import '../styles/registerlogin.css';
-import { Title } from '../Title';
+import { AuthContext } from '../../App';
 
 function Register() {
-  Title('mStack - Register');
   const [user, setUser] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
   });
+
+  const auth1 = useContext(AuthContext);
+
   const navigate = useNavigate();
-  let name, value;
-  const changeHandler = (event) => {
-    name = event.target.name;
-    value = event.target.value;
-    setUser({ ...user, [name]: value });
+
+  const [avatar, setAvatar] = useState('');
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
-  const handleSubmit = async (e) => {
+
+  const handleFile = (e) => {
+    setAvatar(e.target.files[0]);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const { name, email, phone, password } = user;
-    if (name && email && phone && password !== '') {
-      try {
-        const result = await fetch('http://localhost:5000/user/register', {
-          // mode: 'no-cors',
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            phone,
-            password,
-          }),
-        });
-        if (result.status === 500 || !result) {
-          window.alert('User already registerd');
-        } else {
-          window.alert('Registered Successfully');
-          setUser({
-            name: '',
-            email: '',
-            phone: '',
-            password: '',
-          });
-          navigate('/login');
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    } else {
-      window.alert('Every blank field must be required');
-    }
+    const formData = new FormData();
+
+    formData.append('name', user.name);
+    formData.append('email', user.email);
+    formData.append('avatar', avatar);
+    formData.append('phone', user.phone);
+    formData.append('password', user.password);
+
+    axios
+      .post('http://localhost:5000/user/register', formData)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
   };
-  useEffect(() => {
-    AOS.init({
-      duration: 2000,
-    });
-  }, []);
+
   return (
     <>
       <br />
       <br />
       <br />
-      <br />
-      <div className="row text-center">
-        <h1>Let's create an account</h1>
-      </div>
-      <div className="row">
-        <div className="col-sm-12 col-md-12 col-lg-6">
+      {!auth1 ? (
+        <div className="row">
           <form
             action="http://localhost:5000/user/register"
-            method="POST"
-            className="mt-5 p-4"
+            method="post"
+            onSubmit={handleSubmit}
+            encType="multipart/form-data"
           >
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">
-                Name
-              </label>
+              <label htmlFor="name">Name</label>
               <input
-                name="name"
-                type="name"
+                type="text"
                 className="form-control"
-                id="name"
-                onChange={changeHandler}
+                name="name"
+                required={true}
+                id="post"
+                placeholder="name"
                 value={user.name}
-                placeholder="full name"
+                onChange={handleChange}
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="email" className="form-label">
+              <label htmlFor="email" className="mt-2">
                 Email
               </label>
               <input
-                name="email"
                 type="email"
                 className="form-control"
+                name="email"
                 id="email"
-                onChange={changeHandler}
+                placeholder="email"
                 value={user.email}
-                placeholder="name@example.com"
+                required={true}
+                onChange={handleChange}
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="phone" className="form-label">
+              <label htmlFor="phone" className="mt-2">
                 Phone
               </label>
               <input
-                name="phone"
                 type="phone"
                 className="form-control"
+                name="phone"
                 id="phone"
-                onChange={changeHandler}
+                placeholder="phone"
                 value={user.phone}
-                placeholder="+91"
+                required={true}
+                onChange={handleChange}
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">
+              <label htmlFor="password" className="mt-2">
                 Password
               </label>
               <input
-                name="password"
                 type="password"
                 className="form-control"
+                name="password"
                 id="password"
-                onChange={changeHandler}
-                value={user.password}
                 placeholder="password"
+                value={user.password}
+                required={true}
+                onChange={handleChange}
               />
             </div>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSubmit}
-              id="button"
-            >
-              Register
-            </button>
+            <div className="mb-3">
+              <label htmlFor="file">Avatar</label>
+              <input
+                type="file"
+                name="avatar"
+                id="avatar"
+                className="form-control"
+                required={true}
+                onChange={handleFile}
+              />
+            </div>
+            <input
+              type="submit"
+              value="Submit"
+              className="btn btn-success w-100"
+            />
           </form>
         </div>
-        <div className="col-sm-12 col-md-12 col-lg-6">
-          <div
-            data-aos="fade-down"
-            data-aos-easing="linear"
-            data-aos-duration="1000"
-          >
-            <img src={registerImage} alt="registerImage" />
-          </div>
-        </div>
-      </div>
+      ) : (
+        <>{navigate('/')}</>
+      )}
     </>
   );
 }

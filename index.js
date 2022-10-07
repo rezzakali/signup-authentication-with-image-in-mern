@@ -1,13 +1,16 @@
-const express = require('express');
-require('dotenv').config();
-require('./db/dbConnection');
-const userHandler = require('./handler/userHandler');
-const cors = require('cors');
-const port = process.env.PORT;
-const cookieParser = require('cookie-parser');
-const hostname = process.env.HOST_NAME;
-const path = require('path');
-// const path = require('path');
+// external imports
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+
+// internal imports
+import connectionToDb from './config/dbConnection.js';
+import userHandler from './handler/userHandler.js';
+
+// environment setup || database connection function
+dotenv.config();
+connectionToDb();
 
 const app = express();
 app.use(cookieParser());
@@ -19,26 +22,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// app.use(
-//   cors({
-//     origin: 'http://localhost:3000',
-//     methods: ['GET', 'POST'],
-//     credentials: true,
-//   })
-// );
-app.use(express.static('./public/uploads/'));
-// app.use(express.static(path.join(__dirname, './public/Uploads')));
+
+app.use(express.static('./public/Uploads/'));
+app.use('/Uploads', express.static('Uploads'));
 
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/user', userHandler);
-
-// if (process.env.NODE_ENV == 'production') {
-//   app.use(express.static('./client/build'));
-//   app.get('*', (req, res) => {
-//     res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
-//   });
-// }
 
 // error handler
 app.use((err, req, res, next) => {
@@ -50,8 +40,8 @@ app.use((err, req, res, next) => {
 
 // listening server
 
-app.listen(port, hostname, () => {
+app.listen(process.env.PORT, process.env.HOST_NAME, () => {
   console.log(
-    `Your server is running successfully at http://${hostname}:${port}`
+    `Your server is running successfully at http://${process.env.HOST_NAME}:${process.env.PORT}`
   );
 });

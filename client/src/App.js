@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { createContext, useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import GotoTop from './components/GotoTop';
 import Navbar from './components/Navbar';
-import Notfound from './components/Notfound';
 import About from './components/pages/About';
-import Blogs from './components/pages/Blogs';
+import Home from './components/pages/Home';
 import Login from './components/pages/Login';
 import Logout from './components/pages/Logout';
-import Post from './components/pages/Post';
-import PostDetails from './components/pages/PostDetails';
 import Register from './components/pages/Register';
+
+export const AuthContext = createContext();
 
 function App() {
   const [auth, setAuth] = useState(false);
@@ -36,29 +35,23 @@ function App() {
       console.log(error.message);
     }
   };
-
   useEffect(() => {
     isLoggedIn();
   }, []);
 
   return (
-    <div>
+    <AuthContext.Provider value={auth}>
       <div className="container">
         <Navbar auth={auth} />
         <Routes>
-          <Route path="/" element={<Blogs />} />
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/post" element={<Post />} />
-          <Route path="/post/:id" element={<PostDetails />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
-          <Route element={<Notfound />} />
         </Routes>
-        {auth ? <></> : ''}
-        <GotoTop />
       </div>
-    </div>
+    </AuthContext.Provider>
   );
 }
 

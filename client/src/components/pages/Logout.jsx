@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Logout() {
@@ -30,11 +30,7 @@ function Logout() {
     logout();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return (
-    <div>
-      <h1>Logout</h1>
-    </div>
-  );
+  return <></>;
 }
 
 export default Logout;

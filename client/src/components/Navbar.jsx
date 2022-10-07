@@ -4,9 +4,9 @@ import './styles/navbar.css';
 
 function Navbar({ auth }) {
   return (
-    <nav className="navbar fixed-top navbar-expand-lg navbar-light">
+    <nav className="navbar fixed-top navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
-        <h3 className="navbar-brand">mBlog</h3>
+        <h3 className="navbar-brand">MERN</h3>
         <button
           className="navbar-toggler"
           type="button"
@@ -23,7 +23,7 @@ function Navbar({ auth }) {
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <NavLink className="nav-link" to="/">
-                  Blogs
+                  Home
                 </NavLink>
               </li>
               <li className="nav-item">
@@ -31,11 +31,7 @@ function Navbar({ auth }) {
                   About
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/post">
-                  Post
-                </NavLink>
-              </li>
+
               <li className="nav-item">
                 <NavLink className="nav-link" to="/logout">
                   Logout

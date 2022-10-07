@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+// external imports
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 const userSchema = mongoose.Schema({
   name: {
@@ -22,12 +23,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  posts: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: 'Post',
-    },
-  ],
+  avatar: {
+    type: String,
+    required: true,
+  },
   tokens: [
     {
       token: {
@@ -41,14 +40,14 @@ const userSchema = mongoose.Schema({
     default: Date.now,
   },
 });
-
+// hashing password
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = bcrypt.hashSync(this.password, 10);
   }
   next();
 });
-
+// generate token
 userSchema.methods.generateToken = async function () {
   try {
     let generateToken = jwt.sign({ _id: this._id }, process.env.JWT_SECRET);
@@ -63,4 +62,4 @@ userSchema.methods.generateToken = async function () {
 // model
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;
